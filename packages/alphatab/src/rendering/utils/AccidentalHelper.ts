@@ -157,7 +157,8 @@ export class AccidentalHelper {
                 accidentalMode,
                 spelling,
                 quarterBend,
-                currentAccidentalOffset
+                currentAccidentalOffset,
+                note ? note.microtoneCents : 0
             );
 
             let skipAccidental = false;
@@ -165,6 +166,10 @@ export class AccidentalHelper {
                 case AccidentalType.NaturalQuarterNoteUp:
                 case AccidentalType.SharpQuarterNoteUp:
                 case AccidentalType.FlatQuarterNoteUp:
+                case AccidentalType.QuarterToneFlat:
+                case AccidentalType.QuarterToneSharp:
+                case AccidentalType.ThreeQuarterTonesFlat:
+                case AccidentalType.ThreeQuarterTonesSharp:
                     // quarter notes are always set and not compared with steps
                     break;
                 default:
@@ -191,7 +196,12 @@ export class AccidentalHelper {
                     break;
             }
 
-            const shouldRegister = !quarterBend && accidentalToSet !== AccidentalType.None;
+            const isMicrotoneAccidental =
+                accidentalToSet === AccidentalType.QuarterToneFlat ||
+                accidentalToSet === AccidentalType.QuarterToneSharp ||
+                accidentalToSet === AccidentalType.ThreeQuarterTonesFlat ||
+                accidentalToSet === AccidentalType.ThreeQuarterTonesSharp;
+            const shouldRegister = !quarterBend && !isMicrotoneAccidental && accidentalToSet !== AccidentalType.None;
 
             if (shouldRegister) {
                 this._registeredAccidentals.set(steps, spelling.accidentalOffset);

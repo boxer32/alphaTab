@@ -91,6 +91,22 @@ describe('MidiFileGeneratorTest', () => {
         expect((midiFile.tracks[0].events[4] as NoteOnEvent).noteKey).toBe(2);
     });
 
+    it('microtone', () => {
+        const score: Score = parseTex(':4 3.3 3.3 3.3');
+        const notes = score.tracks[0].staves[0].bars[0].voices[0].beats.map(b => b.notes[0]);
+        notes[0].microtoneCents = -50;
+        notes[1].microtoneCents = 25;
+        // third note without microtone must reset the pitch wheel
+
+        const handler: FlatMidiEventGenerator = new FlatMidiEventGenerator();
+        new MidiFileGenerator(score, null, handler).generate();
+
+        const bends = handler.midiEvents.filter(e => e instanceof FlatNoteBendEvent) as FlatNoteBendEvent[];
+        // 1 semitone = 512 pitch wheel units: -50 cents, +25 cents, none
+        expect(bends.map(b => b.value)).toEqual([7936, 8320, 8192]);
+        expect(bends.map(b => b.key)).toEqual(notes.map(n => n.realValue));
+    });
+
     it('bend', () => {
         const tex: string = ':4 15.6{b(0 4)} 15.6';
         const score: Score = parseTex(tex);

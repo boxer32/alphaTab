@@ -3843,6 +3843,40 @@ export class MusicXmlImporter extends ScoreImporter {
         }
     }
 
+    /**
+     * Applies a quarter-tone accidental. The `<alter>` value of the pitch is authoritative,
+     * the accidental only defines the microtone if the pitch did not carry one.
+     */
+    private static _shiftNote(note: Note, semitones: number) {
+        const value = note.octave * 12 + note.tone + semitones;
+        note.octave = Math.floor(value / 12);
+        note.tone = value - note.octave * 12;
+    }
+
+    private _applyQuarterToneAccidental(accidental: string, note: Note) {
+        if (note.microtoneCents !== 0) {
+            return;
+        }
+        switch (accidental) {
+            case 'quarter-flat':
+                note.microtoneCents = -50;
+                break;
+            case 'quarter-sharp':
+                note.microtoneCents = 50;
+                break;
+            case 'three-quarters-flat':
+                MusicXmlImporter._shiftNote(note, -1);
+                note.accidentalMode = NoteAccidentalMode.ForceFlat;
+                note.microtoneCents = -50;
+                break;
+            case 'three-quarters-sharp':
+                MusicXmlImporter._shiftNote(note, 1);
+                note.accidentalMode = NoteAccidentalMode.ForceSharp;
+                note.microtoneCents = 50;
+                break;
+        }
+    }
+
     private _parseAccidental(element: XmlNode, note: Note) {
         // NOTE: this can currently lead to wrong notes shown,
         // TODO: check partwise-complex-measures.xml where accidentals and notes get wrong
@@ -3866,10 +3900,12 @@ export class MusicXmlImporter extends ScoreImporter {
             // case 'sharp-sharp': Not supported
             // case 'natural-sharp': Not supported
             // case 'natural-flat': Not supported
-            // case 'quarter-flat': Not supported
-            // case 'quarter-sharp': Not supported
-            // case 'three-quarters-flat': Not supported
-            // case 'three-quarters-sharp': Not supported
+            case 'quarter-flat':
+            case 'quarter-sharp':
+            case 'three-quarters-flat':
+            case 'three-quarters-sharp':
+                this._applyQuarterToneAccidental(element.innerText, note);
+                break;
             // case 'sharp-down':
             // case 'sharp-up':
             // case 'natural-down':
@@ -3966,9 +4002,21 @@ export class MusicXmlImporter extends ScoreImporter {
             }
         }
 
-        semitones = semitones | 0; // no microtones supported
-        const value: number = octave * 12 + (ModelUtils.getToneForText(step)?.noteValue ?? 0) + semitones;
+        // fractional alters are microtones: whole semitones go into the pitch, the rest into cents
+        const wholeSemitones = semitones | 0;
+        const microtoneCents = Math.round((semitones - wholeSemitones) * 100);
+        const value: number = octave * 12 + (ModelUtils.getToneForText(step)?.noteValue ?? 0) + wholeSemitones;
         const note = new Note();
+        note.microtoneCents = microtoneCents;
+        if (microtoneCents !== 0) {
+            // keep the spelling of the step (e.g. Bb + 50 cents must not become A# + -50 cents)
+            note.accidentalMode =
+                wholeSemitones < 0
+                    ? NoteAccidentalMode.ForceFlat
+                    : wholeSemitones > 0
+                      ? NoteAccidentalMode.ForceSharp
+                      : NoteAccidentalMode.ForceNatural;
+        }
 
         note.octave = (value / 12) | 0;
         note.tone = value - note.octave * 12;

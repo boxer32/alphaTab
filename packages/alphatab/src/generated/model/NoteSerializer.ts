@@ -71,6 +71,7 @@ export class NoteSerializer {
         o.set("trillspeed", obj.trillSpeed as number);
         o.set("durationpercent", obj.durationPercent);
         o.set("accidentalmode", obj.accidentalMode as number);
+        o.set("microtonecents", obj.microtoneCents);
         o.set("dynamics", obj.dynamics as number);
         o.set("ornament", obj.ornament as number);
         if (obj.style) {
@@ -186,6 +187,9 @@ export class NoteSerializer {
                 return true;
             case "accidentalmode":
                 obj.accidentalMode = JsonHelper.parseEnum<NoteAccidentalMode>(v, NoteAccidentalMode)!;
+                return true;
+            case "microtonecents":
+                obj.microtoneCents = v! as number;
                 return true;
             case "dynamics":
                 obj.dynamics = JsonHelper.parseEnum<DynamicValue>(v, DynamicValue)!;

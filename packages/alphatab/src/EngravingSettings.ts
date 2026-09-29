@@ -860,17 +860,33 @@ export class EngravingSettings {
                     bBoxNE: [0.992, 2.316],
                     bBoxSW: [-0.168, -0.708]
                 },
+                accidentalQuarterToneFlatStein: {
+                    bBoxNE: [0.908, 1.756],
+                    bBoxSW: [0.004, -0.7]
+                },
                 accidentalQuarterToneSharpNaturalArrowUp: {
                     bBoxNE: [0.848, 2.188],
                     bBoxSW: [-0.104, -1.36]
+                },
+                accidentalQuarterToneSharpStein: {
+                    bBoxNE: [0.716, 1.228],
+                    bBoxSW: [0, -1.412]
                 },
                 accidentalSharp: {
                     bBoxNE: [0.996, 1.4],
                     bBoxSW: [0, -1.392]
                 },
+                accidentalThreeQuarterTonesFlatZimmermann: {
+                    bBoxNE: [1.864, 1.756],
+                    bBoxSW: [0.004, -0.7]
+                },
                 accidentalThreeQuarterTonesSharpArrowUp: {
                     bBoxNE: [1.1, 2.12],
                     bBoxSW: [0, -1.388]
+                },
+                accidentalThreeQuarterTonesSharpStein: {
+                    bBoxNE: [1.268, 1.476],
+                    bBoxSW: [0.012, -1.388]
                 },
                 arrowheadBlackDown: {
                     bBoxNE: [0.912, 1.196],
@@ -1978,8 +1994,18 @@ export class EngravingSettings {
                     cutOutNE: [0.604, 0.664],
                     cutOutSE: [0.62, -0.452]
                 },
+                accidentalQuarterToneFlatStein: {
+                    cutOutNW: [0.628, 0.676],
+                    cutOutSW: [0.336, -0.428]
+                },
                 accidentalQuarterToneSharpNaturalArrowUp: {
                     cutOutSW: [0.616, -0.868]
+                },
+                accidentalQuarterToneSharpStein: {
+                    cutOutNE: [0.476, 0.748],
+                    cutOutNW: [0.224, 0.604],
+                    cutOutSE: [0.492, -0.8],
+                    cutOutSW: [0.224, -0.92]
                 },
                 accidentalSharp: {
                     cutOutNE: [0.84, 0.896],
@@ -1987,10 +2013,20 @@ export class EngravingSettings {
                     cutOutSE: [0.84, -0.596],
                     cutOutSW: [0.144, -0.896]
                 },
+                accidentalThreeQuarterTonesFlatZimmermann: {
+                    cutOutNE: [1.22, 0.668],
+                    cutOutNW: [0.636, 0.668]
+                },
                 accidentalThreeQuarterTonesSharpArrowUp: {
                     cutOutNW: [0.272, 1.304],
                     cutOutSE: [0.86, -0.584],
                     cutOutSW: [0.132, -0.888]
+                },
+                accidentalThreeQuarterTonesSharpStein: {
+                    cutOutNE: [1.128, 1],
+                    cutOutNW: [0.144, 0.604],
+                    cutOutSE: [1.128, -0.5],
+                    cutOutSW: [0.144, -0.896]
                 },
                 dynamicFF: {
                     opticalCenter: [1.852, 0]

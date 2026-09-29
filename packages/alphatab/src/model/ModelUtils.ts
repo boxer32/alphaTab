@@ -1068,10 +1068,27 @@ export class ModelUtils {
         accidentalMode: NoteAccidentalMode,
         spelling: ResolvedSpelling,
         quarterBend: boolean,
-        currentAccidentalOffset: number | null = null
+        currentAccidentalOffset: number | null = null,
+        microtoneCents: number = 0
     ) {
         if (accidentalMode === NoteAccidentalMode.ForceNone) {
             return AccidentalType.None;
+        }
+
+        if (microtoneCents !== 0) {
+            // round the total offset to the nearest quarter tone
+            const quarterTones = Math.round((spelling.accidentalOffset * 100 + microtoneCents) / 50);
+            switch (quarterTones) {
+                case -3:
+                    return AccidentalType.ThreeQuarterTonesFlat;
+                case -1:
+                    return AccidentalType.QuarterToneFlat;
+                case 1:
+                    return AccidentalType.QuarterToneSharp;
+                case 3:
+                    return AccidentalType.ThreeQuarterTonesSharp;
+            }
+            // offsets closer to a semitone step fall through to the regular handling
         }
 
         if (quarterBend) {

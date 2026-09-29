@@ -992,7 +992,8 @@ export class MidiFileGenerator {
         ) {
             initialBend = -1;
         } else {
-            initialBend = MidiFileGenerator.getPitchWheel(0);
+            // 50 cents equal one bend value (quarter tone)
+            initialBend = MidiFileGenerator.getPitchWheel(note.microtoneCents / 50);
         }
 
         if (initialBend >= 0) {

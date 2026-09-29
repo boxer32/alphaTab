@@ -200,4 +200,11 @@ describe('MusicNotationTests', () => {
     it('bar-lines', async () => {
         await VisualTestHelper.runVisualTest('music-notation/barlines.xml');
     });
+
+    it('microtone-accidentals', async () => {
+        const settings: Settings = new Settings();
+        settings.display.layoutMode = LayoutMode.Page;
+        settings.display.staveProfile = StaveProfile.Score;
+        await VisualTestHelper.runVisualTest('music-notation/microtone-accidentals.musicxml', settings);
+    });
 });

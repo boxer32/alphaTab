@@ -38,5 +38,21 @@ export enum AccidentalType {
     /**
      * Double Flat, indicated by 'bb'
      */
-    DoubleFlat = 8
+    DoubleFlat = 8,
+    /**
+     * A quarter-tone flat (half-flat).
+     */
+    QuarterToneFlat = 9,
+    /**
+     * A quarter-tone sharp (half-sharp).
+     */
+    QuarterToneSharp = 10,
+    /**
+     * Three quarter-tones flat (flat and a half).
+     */
+    ThreeQuarterTonesFlat = 11,
+    /**
+     * Three quarter-tones sharp (sharp and a half).
+     */
+    ThreeQuarterTonesSharp = 12
 }

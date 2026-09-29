@@ -100,7 +100,11 @@ describe('Gp7ExporterTest', () => {
     });
 
     it('visual-music-notation', async () => {
-        await testRoundTripFolderEqual('visual-tests/music-notation', ['barlines.xml']);
+        // microtone: alphaTex syntax and GP7 do not (yet) carry microtonal offsets
+        await testRoundTripFolderEqual('visual-tests/music-notation', [
+            'barlines.xml',
+            'microtone-accidentals.musicxml'
+        ]);
     });
 
     it('visual-notation-legend', async () => {

@@ -567,6 +567,22 @@ export class Note {
     public accidentalMode: NoteAccidentalMode = NoteAccidentalMode.Default;
 
     /**
+     * Gets or sets a microtonal pitch offset of this note in cents (1/100 of a semitone),
+     * relative to the pitch defined by {@link octave} and {@link tone}.
+     * This offset is independent of bends. E.g. an E half-flat is `tone = E` with `-50` cents.
+     * @defaultValue `0`
+     */
+    public microtoneCents: number = 0;
+
+    /**
+     * Gets whether this note has a microtonal pitch offset.
+     * @json_ignore
+     */
+    public get hasMicrotone(): boolean {
+        return this.microtoneCents !== 0;
+    }
+
+    /**
      * Gets or sets the reference to the parent beat to which this note belongs to.
      * @clone_ignore
      * @json_ignore

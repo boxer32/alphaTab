@@ -365,4 +365,33 @@ describe('MusicXmlImporterTests', () => {
             expect(score.tracks[1].staves[0].bars[3].barNumberDisplay).toBe(BarNumberDisplay.Hide);
         });
     });
+
+    it('microtone', async () => {
+        const score: Score = await MusicXmlImporterTestHelper.testReferenceFile(
+            'test-data/musicxml3/microtone-bayati.musicxml',
+            false
+        );
+
+        // bar 2, first note: E half-flat
+        const note = score.tracks[0].staves[0].bars[1].voices[0].beats[0].notes[0];
+        expect(note.tone).toBe(4);
+        expect(note.microtoneCents).toBe(-50);
+        expect(note.hasMicrotone).toBe(true);
+        expect(note.hasBend).toBe(false);
+
+        // notes without fractional alter have no microtone
+        const plain = score.tracks[0].staves[0].bars[0].voices[0].beats[0].notes[0];
+        expect(plain.microtoneCents).toBe(0);
+    });
+
+    it('microtone-accidentals', async () => {
+        const score: Score = await MusicXmlImporterTestHelper.testReferenceFile(
+            'test-data/visual-tests/music-notation/microtone-accidentals.musicxml',
+            false
+        );
+        const notes = score.tracks[0].staves[0].bars[0].voices[0].beats.map(b => b.notes[0]);
+        // E half-flat, F half-sharp, B three-quarter-flat (Bb + -50), G three-quarter-sharp (G# + 50)
+        expect(notes.map(n => n.octave * 12 + n.tone)).toEqual([64, 65, 70, 68]);
+        expect(notes.map(n => n.microtoneCents)).toEqual([-50, 50, -50, 50]);
+    });
 });
