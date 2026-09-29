@@ -107,6 +107,25 @@ describe('MidiFileGeneratorTest', () => {
         expect(bends.map(b => b.key)).toEqual(notes.map(n => n.realValue));
     });
 
+    it('microtone-with-effects', () => {
+        // the microtone offset is added to the per-note pitch bends of all note effects
+        for (const tex of [':4 15.6{b(0 4)}', ':4 15.6{b(0 4 0)}', ':4 15.6{v s}', ':4 15.6{sod}', ':4 15.6{v}']) {
+            const bendsOf = (cents: number) => {
+                const score: Score = parseTex(tex);
+                score.tracks[0].staves[0].bars[0].voices[0].beats[0].notes[0].microtoneCents = cents;
+                const handler: FlatMidiEventGenerator = new FlatMidiEventGenerator();
+                new MidiFileGenerator(score, null, handler).generate();
+                return handler.midiEvents
+                    .filter(e => e instanceof FlatNoteBendEvent)
+                    .map(e => (e as FlatNoteBendEvent).value);
+            };
+            const plain = bendsOf(0);
+            const micro = bendsOf(-50);
+            expect(plain.length, tex).toBeGreaterThan(1);
+            expect(micro, tex).toEqual(plain.map(v => v - 256));
+        }
+    });
+
     it('bend', () => {
         const tex: string = ':4 15.6{b(0 4)} 15.6';
         const score: Score = parseTex(tex);
