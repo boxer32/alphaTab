@@ -44,6 +44,7 @@ import {
     FlatTimeSignatureEvent,
     FlatTrackEndEvent
 } from 'test/audio/FlatMidiEventGenerator';
+import { MusicXmlImporterTestHelper } from 'test/importer/MusicXmlImporterTestHelper';
 import { TestOutput } from 'test/audio/TestOutput';
 import { TestPlatform } from 'test/TestPlatform';
 
@@ -124,6 +125,27 @@ describe('MidiFileGeneratorTest', () => {
             expect(plain.length, tex).toBeGreaterThan(1);
             expect(micro, tex).toEqual(plain.map(v => v - 256));
         }
+    });
+
+    it('microtone-ornaments', async () => {
+        const score = await MusicXmlImporterTestHelper.loadFile('test-data/musicxml3/microtone-ornaments.musicxml');
+        const notes = score.tracks[0].staves[0].bars[0].voices[0].beats.map(b => b.notes[0]);
+        const handler: FlatMidiEventGenerator = new FlatMidiEventGenerator();
+        new MidiFileGenerator(score, null, handler).generate();
+        const bends = handler.midiEvents.filter(e => e instanceof FlatNoteBendEvent) as FlatNoteBendEvent[];
+        const bendsOfKey = (key: number) => bends.filter(b => b.key === key).map(b => b.value);
+
+        // trill note with accidental-mark: initial bend of the main note (-50 cents) and the alternating note (+50 cents)
+        expect(bendsOfKey(notes[0].trillValue)).toEqual([8192 + 256]);
+        expect(bendsOfKey(notes[0].realValue)).toEqual([8192 - 256, 8192 - 256]); // both trill notes are E half-flat
+        // trill note without accidental-mark: alternating note is unchanged. Same key as the first trill note: no extra event
+        expect(bends.filter(b => b.key === notes[1].trillValue).length).toBe(1);
+        // mordent with accidental-mark below: lower auxiliary note gets -50 cents, main note is plain
+        const lowerKey = notes[2].realValue - 1;
+        expect(bendsOfKey(lowerKey)).toEqual([8192 - 256]);
+        expect(bendsOfKey(notes[2].realValue)).toEqual([8192, 8192]); // both mordent notes are plain D
+        // upper mordent without mark: its auxiliary note (E) only carries the bends of the two E half-flat notes
+        expect(bendsOfKey(notes[3].realValue + 2)).toEqual([8192 - 256, 8192 - 256]);
     });
 
     it('bend', () => {

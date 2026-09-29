@@ -1168,6 +1168,26 @@ export class MidiFileGenerator {
             ornamentDurationFactor = noteDuration / MidiUtils.QuarterTime;
         }
 
+        // auxiliary notes only have a microtone offset if the score defines it explicitly
+        if (note.ornamentUpperMicrotoneCents !== 0) {
+            this._handler.addNoteBend(
+                track.index,
+                noteStart,
+                channel,
+                noteKey + MidiFileGenerator._ornamentKeysUp[index],
+                MidiFileGenerator.getPitchWheel(note.ornamentUpperMicrotoneCents / 50)
+            );
+        }
+        if (note.ornamentLowerMicrotoneCents !== 0) {
+            this._handler.addNoteBend(
+                track.index,
+                noteStart,
+                channel,
+                noteKey + MidiFileGenerator.ornamentKeysDown[index],
+                MidiFileGenerator.getPitchWheel(note.ornamentLowerMicrotoneCents / 50)
+            );
+        }
+
         velocity -= MidiUtils.VelocityIncrement;
 
         let totalOrnamentDuration = 0;
@@ -2019,6 +2039,17 @@ export class MidiFileGenerator {
         // NOTE: no noteDuration.beatDurationFactor, the trill speed is absolute and not dependent on the
         // beat effects
         let trillLength: number = MidiUtils.toTicks(note.trillSpeed);
+
+        // the alternating note only has a microtone offset if the score defines it explicitly
+        if (note.trillMicrotoneCents !== 0) {
+            this._handler.addNoteBend(
+                track.index,
+                noteStart,
+                channel,
+                trillKey,
+                MidiFileGenerator.getPitchWheel(note.trillMicrotoneCents / 50)
+            );
+        }
 
         let realKey: boolean = true;
         let tick: number = noteStart;

@@ -50,6 +50,9 @@ export class NoteCloner {
         clone.durationPercent = original.durationPercent;
         clone.accidentalMode = original.accidentalMode;
         clone.microtoneCents = original.microtoneCents;
+        clone.trillMicrotoneCents = original.trillMicrotoneCents;
+        clone.ornamentUpperMicrotoneCents = original.ornamentUpperMicrotoneCents;
+        clone.ornamentLowerMicrotoneCents = original.ornamentLowerMicrotoneCents;
         clone.dynamics = original.dynamics;
         clone.ornament = original.ornament;
         return clone;

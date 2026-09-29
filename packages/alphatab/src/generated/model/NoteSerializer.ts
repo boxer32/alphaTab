@@ -72,6 +72,9 @@ export class NoteSerializer {
         o.set("durationpercent", obj.durationPercent);
         o.set("accidentalmode", obj.accidentalMode as number);
         o.set("microtonecents", obj.microtoneCents);
+        o.set("trillmicrotonecents", obj.trillMicrotoneCents);
+        o.set("ornamentuppermicrotonecents", obj.ornamentUpperMicrotoneCents);
+        o.set("ornamentlowermicrotonecents", obj.ornamentLowerMicrotoneCents);
         o.set("dynamics", obj.dynamics as number);
         o.set("ornament", obj.ornament as number);
         if (obj.style) {
@@ -190,6 +193,15 @@ export class NoteSerializer {
                 return true;
             case "microtonecents":
                 obj.microtoneCents = v! as number;
+                return true;
+            case "trillmicrotonecents":
+                obj.trillMicrotoneCents = v! as number;
+                return true;
+            case "ornamentuppermicrotonecents":
+                obj.ornamentUpperMicrotoneCents = v! as number;
+                return true;
+            case "ornamentlowermicrotonecents":
+                obj.ornamentLowerMicrotoneCents = v! as number;
                 return true;
             case "dynamics":
                 obj.dynamics = JsonHelper.parseEnum<DynamicValue>(v, DynamicValue)!;

@@ -394,4 +394,25 @@ describe('MusicXmlImporterTests', () => {
         expect(notes.map(n => n.octave * 12 + n.tone)).toEqual([64, 65, 70, 68]);
         expect(notes.map(n => n.microtoneCents)).toEqual([-50, 50, -50, 50]);
     });
+
+    it('microtone-ornaments', async () => {
+        const score: Score = await MusicXmlImporterTestHelper.testReferenceFile(
+            'test-data/musicxml3/microtone-ornaments.musicxml',
+            false
+        );
+        const notes = score.tracks[0].staves[0].bars[0].voices[0].beats.map(b => b.notes[0]);
+
+        // trill with accidental-mark
+        expect(notes[0].isTrill).toBe(true);
+        expect(notes[0].trillMicrotoneCents).toBe(50);
+        // trill without accidental-mark keeps the previous behavior
+        expect(notes[1].isTrill).toBe(true);
+        expect(notes[1].trillMicrotoneCents).toBe(0);
+        // mordent with accidental-mark below
+        expect(notes[2].ornamentLowerMicrotoneCents).toBe(-50);
+        expect(notes[2].ornamentUpperMicrotoneCents).toBe(0);
+        // mordent without accidental-mark
+        expect(notes[3].ornamentLowerMicrotoneCents).toBe(0);
+        expect(notes[3].ornamentUpperMicrotoneCents).toBe(0);
+    });
 });

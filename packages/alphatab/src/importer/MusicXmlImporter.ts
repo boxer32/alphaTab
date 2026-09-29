@@ -3696,10 +3696,34 @@ export class MusicXmlImporter extends ScoreImporter {
 
     private _currentTrillStep: number = -1;
 
+    private static _quarterToneAccidentalToCents(accidental: string): number {
+        switch (accidental) {
+            case 'quarter-flat':
+                return -50;
+            case 'quarter-sharp':
+                return 50;
+            case 'three-quarters-flat':
+                return -150;
+            case 'three-quarters-sharp':
+                return 150;
+            default:
+                return 0;
+        }
+    }
+
     private _parseOrnaments(element: XmlNode, note: Note): void {
         let currentTrillStep = -1;
+        // quarter-tone accidental-marks apply to the auxiliary notes of the ornament
+        const accidentalMarks: { above: boolean; cents: number }[] = [];
         for (const c of element.childElements()) {
             switch (c.localName) {
+                case 'accidental-mark': {
+                    const cents = MusicXmlImporter._quarterToneAccidentalToCents(c.innerText);
+                    if (cents !== 0) {
+                        accidentalMarks.push({ above: c.getAttribute('placement', 'above') !== 'below', cents });
+                    }
+                    break;
+                }
                 case 'trill-mark':
                     currentTrillStep = Number.parseInt(c.getAttribute('trill-step', '2'), 10);
                     if (note.isStringed) {
@@ -3758,6 +3782,17 @@ export class MusicXmlImporter extends ScoreImporter {
                     break;
                 // case 'haydn': Not supported
                 // case 'other-element': Not supported
+            }
+        }
+
+        for (const mark of accidentalMarks) {
+            if (note.isTrill) {
+                // the trill alternates with the note above
+                note.trillMicrotoneCents = mark.cents;
+            } else if (mark.above) {
+                note.ornamentUpperMicrotoneCents = mark.cents;
+            } else {
+                note.ornamentLowerMicrotoneCents = mark.cents;
             }
         }
     }

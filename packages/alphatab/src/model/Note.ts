@@ -575,6 +575,27 @@ export class Note {
     public microtoneCents: number = 0;
 
     /**
+     * Gets or sets the microtonal pitch offset in cents of the alternating note of the trill,
+     * relative to the pitch defined by {@link trillValue}.
+     * @defaultValue `0`
+     */
+    public trillMicrotoneCents: number = 0;
+
+    /**
+     * Gets or sets the microtonal pitch offset in cents of the note above the main note
+     * used by the {@link ornament}, relative to the pitch derived from the scale.
+     * @defaultValue `0`
+     */
+    public ornamentUpperMicrotoneCents: number = 0;
+
+    /**
+     * Gets or sets the microtonal pitch offset in cents of the note below the main note
+     * used by the {@link ornament}, relative to the pitch derived from the scale.
+     * @defaultValue `0`
+     */
+    public ornamentLowerMicrotoneCents: number = 0;
+
+    /**
      * Gets whether this note has a microtonal pitch offset.
      * @json_ignore
      */
